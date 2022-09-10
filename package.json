@@ -1,0 +1,34 @@
+{
+  "name": "vite-plugin-proxy-page",
+  "version": "0.0.1",
+  "license": "MIT",
+  "author": "Alex MacArthur (https://macarthur.me)",
+  "homepage": "https://github.com/alexmacarthur/vite-plugin-proxy-page",
+  "scripts": {
+    "dev": "vite",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "build": "vite build && tsc",
+    "format": "prettier --write \"./**/*.{md,js,ts}\""
+  },
+  "main": "dist/index.umd.js",
+  "module": "dist/index.es.js",
+  "types": "dist/index.d.ts",
+  "keywords": [
+    "vite-plugin",
+    "proxy",
+    "rewrite"
+  ],
+  "devDependencies": {
+    "@types/jsdom": "^20.0.0",
+    "@types/prettier": "^2.7.0",
+    "prettier": "^2.7.1",
+    "typescript": "^4.5.4",
+    "vite": "^2.9.15",
+    "vitest": "^0.23.2"
+  },
+  "dependencies": {
+    "isomorphic-fetch": "^3.0.0",
+    "jsdom": "^20.0.0"
+  }
+}
