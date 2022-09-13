@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { proxyPage, htmlCache } from "./index";
+import axios from "axios";
 
 const url = "https://vite-proxy-demo.netlify.app/some-page";
 
@@ -10,27 +11,31 @@ beforeEach(() => {
 
 describe("caching", () => {
   it("performs fresh transformation when cache is empty", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const requestSpy = vi.spyOn(axios, "get");
 
-    await proxyPage({
+    const plugin = proxyPage({
       localEntryPoint: "local-dev.tsx",
       remoteUrl: url,
-    }).transformIndexHtml();
+    });
 
-    expect(fetchSpy).toHaveBeenCalledTimes(1);
+    await plugin.transformIndexHtml("");
+
+    expect(requestSpy).toHaveBeenCalledTimes(1);
     expect(htmlCache.get(url)).not.toBe(undefined);
   });
 
   it("uses cache when it's filled", async () => {
-    const fetchSpy = vi.spyOn(globalThis, "fetch");
+    const requestSpy = vi.spyOn(axios, "get");
 
     htmlCache.set(url, "<html></html>");
 
-    await proxyPage({
+    const plugin = proxyPage({
       localEntryPoint: "local-dev.tsx",
       remoteUrl: url,
-    }).transformIndexHtml();
+    });
 
-    expect(fetchSpy).toHaveBeenCalledTimes(0);
+    await plugin.transformIndexHtml("");
+
+    expect(requestSpy).toHaveBeenCalledTimes(0);
   });
 });

@@ -1,5 +1,6 @@
-import "isomorphic-fetch";
+import { Plugin } from "vite";
 import transform from "./transform";
+import axios from "axios";
 
 export interface RootNode {
   prependTo?: string;
@@ -13,6 +14,10 @@ export interface ProxyPageOptions {
   rootNode?: RootNode;
 }
 
+export interface ProxyPlugin extends Plugin {
+  transformIndexHtml: (html: string) => Promise<any>;
+}
+
 export const htmlCache = new Map();
 
 export const proxyPage = ({
@@ -20,30 +25,33 @@ export const proxyPage = ({
   remoteEntryPoint,
   remoteUrl,
   rootNode,
-}: ProxyPageOptions) => ({
-  name: "vite-plugin-proxy-page",
+}: ProxyPageOptions): ProxyPlugin => {
+  return {
+    name: "vite-plugin-proxy-page",
 
-  apply: "serve",
+    apply: "serve",
 
-  async transformIndexHtml() {
-    if (htmlCache.get(remoteUrl)) {
-      return htmlCache.get(remoteUrl);
-    }
+    async transformIndexHtml(_html = ""): Promise<string> {
+      if (htmlCache.get(remoteUrl)) {
+        return htmlCache.get(remoteUrl);
+      }
 
-    const html = await fetch(remoteUrl).then((r) => r.text());
+      const { origin } = new URL(remoteUrl);
+      const { data: html } = await axios.get(remoteUrl, {
+        responseType: "text",
+      });
 
-    const { origin } = new URL(remoteUrl);
+      const transformedHtml = transform({
+        html,
+        localEntryPoint,
+        remoteEntryPoint,
+        remoteHost: origin,
+        rootNode,
+      });
 
-    const transformedHtml = transform({
-      html,
-      localEntryPoint,
-      remoteEntryPoint,
-      remoteHost: origin,
-      rootNode,
-    });
+      htmlCache.set(remoteUrl, transformedHtml);
 
-    htmlCache.set(remoteUrl, transformedHtml);
-
-    return transformedHtml;
-  },
-});
+      return transformedHtml;
+    },
+  };
+};

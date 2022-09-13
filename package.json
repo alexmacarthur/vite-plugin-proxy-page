@@ -1,19 +1,21 @@
 {
   "name": "vite-plugin-proxy-page",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "license": "MIT",
   "author": "Alex MacArthur (https://macarthur.me)",
-  "homepage": "https://github.com/alexmacarthur/vite-plugin-proxy-page",
+  "homepage": "https://macarthur.me/posts/project-local-spa-onto-production-page",
   "scripts": {
     "dev": "vite",
     "test": "vitest run",
     "test:watch": "vitest",
-    "build": "vite build && tsc",
+    "build": "rm -rf dist && npm run build:esm && npm run build:cjs",
+    "build:esm": "tsc --module es2015 --outDir dist/esm",
+    "build:cjs": "tsc --module commonjs --outDir dist/cjs",
     "format": "prettier --write \"./**/*.{md,js,ts}\""
   },
-  "main": "dist/index.umd.js",
-  "module": "dist/index.es.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "types": "dist/types/index.d.ts",
   "keywords": [
     "vite-plugin",
     "proxy",
@@ -28,7 +30,7 @@
     "vitest": "^0.23.2"
   },
   "dependencies": {
-    "isomorphic-fetch": "^3.0.0",
+    "axios": "^0.27.2",
     "jsdom": "^20.0.0"
   }
 }
