@@ -9,6 +9,36 @@ beforeEach(() => {
   htmlCache.clear();
 });
 
+describe("hmr injections", () => {
+  it("injects import.meta.hot when entry point is handled", () => {
+    const plugin = proxyPage({
+      localEntryPoint: "./local-dev.tsx",
+      remoteUrl: url,
+    });
+
+    const result = plugin.transform(
+      "var test = 'true'",
+      "/path/to/my/local-dev.tsx"
+    );
+
+    expect(result).toEqual("import.meta.hot; var test = 'true'");
+  });
+
+  it("does not inject import.meta.hot when entry point is not handled", () => {
+    const plugin = proxyPage({
+      localEntryPoint: "./local-dev.tsx",
+      remoteUrl: url,
+    });
+
+    const result = plugin.transform(
+      "var test = 'true'",
+      "/path/to/some/other/file.js"
+    );
+
+    expect(result).toEqual("var test = 'true'");
+  });
+});
+
 describe("caching", () => {
   it("performs fresh transformation when cache is empty", async () => {
     const requestSpy = vi.spyOn(axios, "get");

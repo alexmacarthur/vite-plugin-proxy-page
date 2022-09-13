@@ -1,6 +1,7 @@
 import { Plugin } from "vite";
 import transform from "./transform";
 import axios from "axios";
+import { stringifyFromPattern } from "./utils";
 
 export interface RootNode {
   prependTo?: string;
@@ -16,6 +17,7 @@ export interface ProxyPageOptions {
 
 export interface ProxyPlugin extends Plugin {
   transformIndexHtml: (html: string) => Promise<any>;
+  transform: (src: string, id: string) => any;
 }
 
 export const htmlCache = new Map();
@@ -30,6 +32,14 @@ export const proxyPage = ({
     name: "vite-plugin-proxy-page",
 
     apply: "serve",
+
+    transform(src, id) {
+      const entry = localEntryPoint.replace(/^\./, "");
+      const pattern = new RegExp(stringifyFromPattern(entry));
+      const isLocalEntryPoint = pattern.test(id);
+
+      return isLocalEntryPoint ? `import.meta.hot; ${src}` : src;
+    },
 
     async transformIndexHtml(_html = ""): Promise<string> {
       if (htmlCache.get(remoteUrl)) {
