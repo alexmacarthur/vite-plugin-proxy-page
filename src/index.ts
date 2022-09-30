@@ -13,6 +13,7 @@ export interface ProxyPageOptions {
   remoteUrl: string;
   remoteEntryPoint?: RegExp | string;
   rootNode?: RootNode;
+  cacheHtml?: boolean;
 }
 
 export interface ProxyPlugin extends Plugin {
@@ -27,6 +28,7 @@ export const proxyPage = ({
   remoteEntryPoint,
   remoteUrl,
   rootNode,
+  cacheHtml = true,
 }: ProxyPageOptions): ProxyPlugin => {
   return {
     name: "vite-plugin-proxy-page",
@@ -42,7 +44,7 @@ export const proxyPage = ({
     },
 
     async transformIndexHtml(_html = ""): Promise<string> {
-      if (htmlCache.get(remoteUrl)) {
+      if (cacheHtml && htmlCache.get(remoteUrl)) {
         return htmlCache.get(remoteUrl);
       }
 
@@ -59,7 +61,7 @@ export const proxyPage = ({
         rootNode,
       });
 
-      htmlCache.set(remoteUrl, transformedHtml);
+      cacheHtml && htmlCache.set(remoteUrl, transformedHtml);
 
       return transformedHtml;
     },

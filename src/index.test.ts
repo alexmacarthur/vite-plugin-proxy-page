@@ -41,7 +41,9 @@ describe("hmr injections", () => {
 
 describe("caching", () => {
   it("performs fresh transformation when cache is empty", async () => {
-    const requestSpy = vi.spyOn(axios, "get");
+    const requestSpy = vi.spyOn(axios, "get").mockImplementation(() => {
+      return Promise.resolve({ data: "<html><body></body></html>" });
+    });
 
     const plugin = proxyPage({
       localEntryPoint: "local-dev.tsx",
@@ -55,7 +57,9 @@ describe("caching", () => {
   });
 
   it("uses cache when it's filled", async () => {
-    const requestSpy = vi.spyOn(axios, "get");
+    const requestSpy = vi.spyOn(axios, "get").mockImplementation(() => {
+      return Promise.resolve({ data: "<html><body></body></html>" });
+    });
 
     htmlCache.set(url, "<html></html>");
 
@@ -67,5 +71,22 @@ describe("caching", () => {
     await plugin.transformIndexHtml("");
 
     expect(requestSpy).toHaveBeenCalledTimes(0);
+  });
+
+  it("does not cache when the option is disabled", async () => {
+    const requestSpy = vi.spyOn(axios, "get").mockImplementation(() => {
+      return Promise.resolve({ data: "<html><body></body></html>" });
+    });
+
+    const plugin = proxyPage({
+      localEntryPoint: "local-dev.tsx",
+      remoteUrl: url,
+      cacheHtml: false,
+    });
+
+    await plugin.transformIndexHtml("");
+
+    expect(requestSpy).toHaveBeenCalledTimes(1);
+    expect(htmlCache.get(url)).toBe(undefined);
   });
 });
