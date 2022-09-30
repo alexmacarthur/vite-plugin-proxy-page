@@ -8,7 +8,7 @@ It's an increasingly common pattern to independently develop small applications 
 
 This plugin swaps out your local `index.html` file for a public page of your choosing. You'll get the UI, styles, and other assets just as if you were on the actual page, but still get to keep the snappy developer experience of a typical Vite setup.
 
-\*\*\*\*## Installation
+## Installation
 
 `npm install vite-plugin-proxy-page`
 
@@ -81,7 +81,7 @@ Using this example, a new `<div id="app"></div>` node will be prepended to the `
 | `remoteUrl`        | The full URL of the page you want proxy. Ex: "https://example-site.com/my-page"                                                                                                                                                                                                     | `true`   |
 | `remoteEntryPoint` | A RegExp or string of the deployed bundle URL. If this is set, the script tag loading that bundle will be removed from the proxied page's HTML in order to prevent unexpected bundle collisions with your local version. Ex: "./production-bundle.js" or /\./production-bundle\.js/ | `false`  |
 | `rootNode`         | An object for specifying the HTML ID of the node you'd like to inject on to the page (`id`), as well as a CSS selector for where you'd like to prepend it (the default is the body). Ex: `{ id: "myApp", prependTo: ".ArticleContent" }`.                                           | `false`  |
-| `cacheHtml`        | Determines whether the remote HTML will be cached in memory while your Vite server runs, rather than refetching after each page refresh or local code change. By default, this is set to `true`.                                                                                    | `false`  |
+| `cacheHtml`        | Determines whether the remote HTML will be cached in memory while your Vite server runs, rather than refetching after each page reload or local code change. By default, this is set to `true`.                                                                                     | `false`  |
 
 ## Contributions
 
