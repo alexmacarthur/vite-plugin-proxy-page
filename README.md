@@ -31,7 +31,7 @@ export default defineConfig({
 });
 ```
 
-At the very least, you'll need to specify a remote page you'd like to proxy, as well as which local entry point Vite should inject onto the page.
+At the very least, you'll need to specify a remote page you'd like to proxy, as well as which local entry point Vite should inject onto the page. By default, this script tag will be injected just before the closing `</body>` tag, but if that doesn't exist, it'll be attached to the end of the HTML.
 
 ```diff
 // vite.config.js

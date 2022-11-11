@@ -57,7 +57,12 @@ export function insertLocalEntryScript(
   localEntryPoint: string
 ): string {
   const constructedScript = `<script type="module" src="${localEntryPoint}"></script>`;
-  return html.replace(/(<\/body>)/, `${constructedScript}$1`);
+
+  if (/<\/body>/.test(html)) {
+    return html.replace(/(<\/body>)/, `${constructedScript}$1`);
+  }
+
+  return `${html}${constructedScript}`;
 }
 
 const sourcesPattern = /(<[^<].*?(?:src|href)=(?:"|'))(.+?)((?:"|').*?>)/g;

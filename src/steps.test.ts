@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { remoteRemoteEntryPoint, setUpRootElement } from "./steps";
+import {
+  insertLocalEntryScript,
+  remoteRemoteEntryPoint,
+  setUpRootElement,
+} from "./steps";
 import { htmlMatches } from "./test-utils";
 
 describe("setUpRootElement()", () => {
@@ -112,5 +116,27 @@ describe("remoteRemoteEntryPoint()", () => {
       /\/some\/\js\/target\.js-does-not-exist/
     );
     expect(patternResult).toEqual(html);
+  });
+});
+
+describe("insertLocalEntryScript()", () => {
+  it("mounts script to inside of body if body element exists", () => {
+    const html = `<body><div>hello</div></body>`;
+
+    const result = insertLocalEntryScript(html, "./my-script.js");
+
+    expect(result).toEqual(
+      '<body><div>hello</div><script type="module" src="./my-script.js"></script></body>'
+    );
+  });
+
+  it("mounts script outside all HTML if body element does not exist", () => {
+    const html = `<div>hello</div>`;
+
+    const result = insertLocalEntryScript(html, "./my-script.js");
+
+    expect(result).toEqual(
+      '<div>hello</div><script type="module" src="./my-script.js"></script>'
+    );
   });
 });
