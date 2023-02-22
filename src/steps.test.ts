@@ -72,6 +72,40 @@ describe("setUpRootElement()", () => {
     </html>`
     );
   });
+
+  it("injects error log when mount point selector isn't found", () => {
+    const html = `
+    <html>
+      <head></head>
+      <body>
+        <main>
+        </main>
+      </body>
+    </html>`;
+    const rootNodeOptions = {
+      id: "someId3",
+      prependTo: ".does-not-exist",
+    };
+
+    const result = setUpRootElement({ html, rootNodeOptions });
+
+    htmlMatches(
+      result,
+      `
+    <html>
+      <head></head>
+      <body>
+        <script>
+          console.error(
+            '[vite-plugin-proxy-page] Error! Could not find selector ".does-not-exist" in the document. Defaulting to body.'
+          );
+        </script>
+        <div id="someId3"></div>
+        <main></main>
+      </body>
+    </html>`
+    );
+  });
 });
 
 describe("remoteRemoteEntryPoint()", () => {

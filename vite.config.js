@@ -9,7 +9,7 @@ export default defineConfig({
         "https://www.ramseysolutions.com/real-estate/moving-and-storage",
       rootNode: {
         id: "someId",
-        prependTo: "main",
+        prependTo: ".mainz",
       },
     }),
   ],
