@@ -1,6 +1,11 @@
 import { JSDOM } from "jsdom";
 import { RootNode } from ".";
-import { findTargetScript, stringifyFromPattern } from "./utils";
+import {
+  findTargetScript,
+  stringifyFromPattern,
+  findSelectorInDocument,
+  getSelectorNotFoundMessage,
+} from "./utils";
 
 export function setUpRootElement({
   html,
@@ -13,19 +18,37 @@ export function setUpRootElement({
 
   if (!htmlId) return html;
 
+  // If a root element is provided, it's likely because it doesn't exist in the
+  // remote HTML to begin with. So, we make it, and (maybe) mount it to a
+  // particular part of the page.
   const dom = new JSDOM(html);
   const doc = dom.window.document;
-  const mountPoint = prependTo && doc.querySelector(prependTo);
   let rootEl = dom.window.document.getElementById(htmlId);
 
+  // Check to ensure it doesn't already exist on the page.
   if (!rootEl) {
     rootEl = doc.createElement("div");
     rootEl.id = htmlId;
     doc.body.prepend(rootEl);
   }
 
+  if (!prependTo) return doc.documentElement.outerHTML;
+
+  const mountPoint = findSelectorInDocument(doc, prependTo);
+
+  // If provided, mount the application node to the mount point.
+  // Otherwise, leave it mounted to the document body.
   if (mountPoint) {
     mountPoint.prepend(rootEl);
+  } else {
+    // We couldn't find the mount point, so attach it to the document,
+    // so that the console log appears in the browser.
+    doc.body.insertAdjacentHTML(
+      "afterbegin",
+      `<script>console.error('${getSelectorNotFoundMessage(
+        prependTo
+      )}')</script>`
+    );
   }
 
   return doc.documentElement.outerHTML;
