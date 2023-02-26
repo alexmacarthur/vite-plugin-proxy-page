@@ -1,7 +1,9 @@
+import axios from "axios";
 import { Plugin } from "vite";
 import transform from "./transform";
-import axios from "axios";
-import { stringifyFromPattern } from "./utils";
+import { createRootIfNotExists, stringifyFromPattern } from "./utils";
+
+export const PLUGIN_NAME = "vite-plugin-proxy-page";
 
 export interface RootNode {
   prependTo?: string;
@@ -31,9 +33,13 @@ export const proxyPage = ({
   cacheHtml = true,
 }: ProxyPageOptions): ProxyPlugin => {
   return {
-    name: "vite-plugin-proxy-page",
+    name: PLUGIN_NAME,
 
     apply: "serve",
+
+    configResolved({ root }) {
+      createRootIfNotExists(root);
+    },
 
     transform(src, id) {
       const entry = localEntryPoint.replace(/^\./, "");

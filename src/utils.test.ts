@@ -1,6 +1,7 @@
 import { JSDOM } from "jsdom";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { findSelectorInDocument } from "./utils";
+import { createRootIfNotExists, findSelectorInDocument } from "./utils";
+import fs from "fs";
 
 describe("findSelectorInDocument()", () => {
   beforeEach(() => {
@@ -34,5 +35,34 @@ describe("findSelectorInDocument()", () => {
 
     expect(result).toBe(node);
     expect(console.error).not.toBeCalled();
+  });
+});
+
+describe("createRootIfNotExists()", () => {
+  beforeEach(() => {
+    console.log = vi.fn();
+  });
+
+  it("creates a root index.html file if one doesn't exist", () => {
+    vi.spyOn(fs, "existsSync").mockImplementation(() => false);
+    const fsWriteSpy = vi
+      .spyOn(fs, "writeFileSync")
+      .mockImplementation(() => null);
+
+    createRootIfNotExists("root");
+
+    expect(fsWriteSpy).toBeCalledWith(
+      "root/index.html",
+      expect.stringMatching(/<!DOCTYPE html>/)
+    );
+  });
+
+  it("does not create root index.html file when it already exists", () => {
+    vi.spyOn(fs, "existsSync").mockImplementation(() => true);
+    const fsWriteSpy = vi.spyOn(fs, "writeFileSync");
+
+    createRootIfNotExists("root");
+
+    expect(fsWriteSpy).not.toBeCalled();
   });
 });
