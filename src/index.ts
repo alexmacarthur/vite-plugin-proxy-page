@@ -37,6 +37,8 @@ export const proxyPage = ({
 
     apply: "serve",
 
+    enforce: "pre",
+
     configResolved({ root }) {
       createRootIfNotExists(root);
     },

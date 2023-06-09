@@ -1,6 +1,6 @@
 {
   "name": "vite-plugin-proxy-page",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "license": "MIT",
   "author": "Alex MacArthur (https://macarthur.me)",
   "homepage": "https://macarthur.me/posts/project-local-spa-onto-production-page",
