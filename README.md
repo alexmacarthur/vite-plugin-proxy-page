@@ -14,7 +14,7 @@ This plugin swaps out your local `index.html` file for a public page of your cho
 
 ## Setup
 
-Import the plugin and initialize it your `plugins` array:
+Import the plugin and initialize it your `plugins` array. To avoid issues with the [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react) and similar plugins that deal with JSX, make sure it's the **first** plugin registered in the array.
 
 ```js
 // vite.config.js
@@ -82,7 +82,6 @@ Using this example, a new `<div id="app"></div>` node will be prepended to the `
 | `remoteEntryPoint` | A RegExp or string of the deployed bundle URL. If this is set, the script tag loading that bundle will be removed from the proxied page's HTML in order to prevent unexpected bundle collisions with your local version. Ex: "./production-bundle.js" or /\./production-bundle\.js/                                                               | `false`  |
 | `rootNode`         | An object for specifying the HTML ID of the node you'd like to inject on to the page (`id`), as well as a CSS selector for where you'd like to prepend it (the default is the body). Use this if the remote page doesn't have a particular ID to which you'd like to mount your application. Ex: `{ id: "myApp", prependTo: ".ArticleContent" }`. | `false`  |
 | `cacheHtml`        | Determines whether the remote HTML will be cached in memory while your Vite server runs, rather than refetching after each page reload or local code change. By default, this is set to `true`.                                                                                                                                                   | `false`  |
-
 ## Contributions
 
 File an issue or make a PR!
